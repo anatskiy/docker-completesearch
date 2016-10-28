@@ -1,4 +1,4 @@
-CompleteSearch Docker Image
+CompleteSearch Docker Image: download CompleteSearch source code with all dependencies and compile (build) it.
 
 ## Installed tools
 
