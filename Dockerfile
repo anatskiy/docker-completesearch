@@ -2,15 +2,20 @@ FROM ubuntu:14.04
 
 MAINTAINER Evgeny Anatskiy <evgeny.anatskiy@gmail.com>
 
-RUN \
-  apt update && \
-  apt -y upgrade && \
-  apt install -y language-pack-en make subversion && \
-  locale-gen && \
-  export LANG=en_US.UTF-8
+ARG USERNAME
+ARG PASSWORD
 
 RUN \
-  mkdir -p /home/root
+  apt-get update && \
+  apt-get -y upgrade && \
+  apt-get install -y language-pack-en make nano subversion && \
+  apt-get install -y g++ zlib1g-dev libexpat1-dev libboost-all-dev libsparsehash-dev libgtest-dev libstxxl-dev && \
+  mkdir completesearch && cd completesearch && \
+  svn checkout https://ad-svn.informatik.uni-freiburg.de/completesearch/codebase --username $USERNAME --password $PASSWORD --non-interactive --trust-server-cert && \
+  cd codebase && \
+  sed -i '/#CS_CODE_DIR/c\CS_CODE_DIR = /completesearch/codebase' Makefile && \
+  make build-all
 
+ENV LANG=en_US.UTF-8
 
-WORKDIR /home/root
+WORKDIR /completesearch/codebase
