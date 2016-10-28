@@ -17,6 +17,10 @@ docker build -t completesearch --build-arg USERNAME=username --build-arg PASSWOR
 ```
 Where *USERNAME* and *PASSWORD* are your credentials for CompleteSearch svn repository.
 
+**Note:** You need to escape the password with quotes "".
+
+---
+
 To run:
 ```
 docker run -it -p 8888:8888 completesearch /bin/bash  
