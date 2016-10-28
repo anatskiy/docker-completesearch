@@ -15,7 +15,7 @@ To build:
 ```
 docker build -t completesearch --build-arg USERNAME=username --build-arg PASSWORD="password" .
 ```
-Where USERNAME and PASSWORD are your credentials for CompleteSearch svn repository.
+Where *USERNAME* and *PASSWORD* are your credentials for CompleteSearch svn repository.
 
 To run:
 ```
