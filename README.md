@@ -7,8 +7,8 @@ CompleteSearch Docker image: download CompleteSearch source code with all depend
 
 ## Requirements
 
-* [Docker](https://docs.docker.com/installation/) for Linux / macOS / Windows
-* [Kitematic](https://kitematic.com) for macOS / Windows (Optional)
+* [Docker](https://docs.docker.com/installation/) for Linux/macOS/Windows
+* [Docker Machine](https://docs.docker.com/machine/install-machine/) for Linux/macOS/Windows
 
 ## Installation
 
