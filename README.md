@@ -57,9 +57,7 @@ docker-machine ip
 
 Run CompleteSearch `http://<docker-machine-ip>:5000`
 
----
-
-### To enter a running container:
+To enter the running container:
 ```
 docker exec -it completesearch /bin/bash
 docker restart completesearch
