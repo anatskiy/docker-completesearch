@@ -56,7 +56,7 @@ Get Docker Machine ip:
 docker-machine ip
 ```
 
-Run CompleteSearch `http://<docker-machine-ip>:5000/`
+Open CompleteSearch `http://<docker-machine-ip>:5000/`
 
 To enter the running container:
 ```
