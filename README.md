@@ -7,14 +7,14 @@ CompleteSearch Docker image: download CompleteSearch source code with all depend
 
 ## Requirements
 
-* [Docker](https://docs.docker.com/installation/) for Linux/macOS/Windows
+* [Docker](https://docs.docker.com/engine/installation/) for Linux/macOS/Windows
 * [Docker Machine](https://docs.docker.com/machine/install-machine/) for Linux/macOS/Windows
 
 ## Installation
 
 ### Step 0
 
-Install [Docker](https://docs.docker.com/installation/) and [Docker Machine](https://docs.docker.com/machine/install-machine/).
+Install [Docker](https://docs.docker.com/engine/installation/) and [Docker Machine](https://docs.docker.com/machine/install-machine/).
 
 Configure Docker Machine:
 ```
@@ -56,7 +56,7 @@ Get Docker Machine ip:
 docker-machine ip
 ```
 
-Run CompleteSearch `http://<docker-machine-ip>:5000`
+Run CompleteSearch `http://<docker-machine-ip>:5000/`
 
 To enter the running container:
 ```
