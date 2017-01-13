@@ -17,6 +17,15 @@ RUN \
   svn checkout https://ad-svn.informatik.uni-freiburg.de/completesearch/codebase --username $USERNAME --password $PASSWORD --non-interactive --trust-server-cert && \
   cd codebase && \
   sed -i '/#CS_CODE_DIR/c\CS_CODE_DIR = /completesearch/codebase' Makefile && \
+  cp parser/utf8.map server && \
+  mkdir input
+
+# Fix some bugs in the source code (temporary solution)
+ADD ./fixed/CompletionServer.cpp /completesearch/codebase/server
+ADD ./fixed/ExcerptsGenerator.cpp /completesearch/codebase/server
+
+RUN \
+  cd /completesearch/codebase && \
   make build-all
 
 WORKDIR /completesearch/codebase
