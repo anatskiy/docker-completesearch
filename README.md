@@ -21,7 +21,7 @@ docker-machine create -d virtualbox default
 docker-machine env default
 eval "$(docker-machine env default)"
 ```
-[More information](https://docs.docker.com/machine/get-started/) on Docker Machine.
+[More information](https://docs.docker.com/machine/get-started/).
 
 ### Step 1
 
@@ -35,7 +35,7 @@ Build the image:
 ```
 docker build -t completesearch --build-arg SVN_USERNAME="username" --build-arg SVN_PASSWORD="password” .
 ```
-Where *SVN_USERNAME* and *SVN_PASSWORD* are your credentials for CompleteSearch svn repository.
+Where *SVN_USERNAME* and *SVN_PASSWORD* are your credentials for CompleteSearch svn repository. [More information](http://ad-wiki.informatik.uni-freiburg.de/completesearch).
 
 **Note:** You need to escape username and password with quotes "".
 
