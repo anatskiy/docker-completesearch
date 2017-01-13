@@ -2,30 +2,59 @@ FROM ubuntu:14.04
 
 MAINTAINER Evgeny Anatskiy <evgeny.anatskiy@gmail.com>
 
-ARG USERNAME
-ARG PASSWORD
+# Install CompleteSearch dependencies
+RUN apt-get update && apt-get -y upgrade && \
+    apt-get install -y language-pack-en make subversion && \
+    apt-get install -y g++ zlib1g-dev libexpat1-dev libboost-all-dev libsparsehash-dev libgtest-dev libstxxl-dev
 
-RUN \
-  apt-get update && apt-get -y upgrade && \
-  apt-get install -y language-pack-en make nano subversion && \
-  apt-get install -y g++ zlib1g-dev libexpat1-dev libboost-all-dev libsparsehash-dev libgtest-dev libstxxl-dev
+# Build arguments
+ARG SVN_USERNAME
+ARG SVN_PASSWORD
 
 ENV LANG en_US.UTF-8
+ENV TERM=xterm
 
-RUN \
-  mkdir completesearch && cd completesearch && \
-  svn checkout https://ad-svn.informatik.uni-freiburg.de/completesearch/codebase --username $USERNAME --password $PASSWORD --non-interactive --trust-server-cert && \
-  cd codebase && \
-  sed -i '/#CS_CODE_DIR/c\CS_CODE_DIR = /completesearch/codebase' Makefile && \
-  cp parser/utf8.map server && \
-  mkdir input
+WORKDIR /usr/src/completesearch
+
+# Download CompleteSearch
+RUN svn checkout https://ad-svn.informatik.uni-freiburg.de/completesearch/codebase --username $SVN_USERNAME --password $SVN_PASSWORD --non-interactive --trust-server-cert . && \
+    mv Makefile Makefile_orig && \
+    cp parser/utf8.map server
+
+ADD Makefile ./
 
 # Fix some bugs in the source code (temporary solution)
-ADD ./fixed/CompletionServer.cpp /completesearch/codebase/server
-ADD ./fixed/ExcerptsGenerator.cpp /completesearch/codebase/server
+ADD fixes/* server/
 
-RUN \
-  cd /completesearch/codebase && \
-  make build-all
+# Build CompleteSearch
+RUN make build-all
 
-WORKDIR /completesearch/codebase
+WORKDIR /usr/src/app
+
+# Install CompleteSearch web app dependencies
+RUN apt-get install -y nano curl git python3-pip npm && \
+    curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash - && \
+    apt-get install -y nodejs
+
+# Download CompleteSearch web app
+RUN git clone https://github.com/anatskiy/CompleteSearch.git . && mkdir logs
+
+# Install backend dependencies
+RUN pip3 install -r requirements.txt
+
+# Install frontend dependencies
+RUN cd client && \
+    npm install -g gulp && \
+    npm install
+
+# Build client
+RUN cd client && gulp build
+
+# Create shared folder
+RUN mkdir /usr/src/data
+
+VOLUME ["/usr/src/app", "/usr/src/completesearch", "/usr/src/data"]
+
+EXPOSE 5000
+
+CMD ["python3", "manage.py", "runserver", "-h", "0.0.0.0", "-p", "5000"]

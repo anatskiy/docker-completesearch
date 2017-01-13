@@ -13,11 +13,11 @@ CompleteSearch Docker Image: download CompleteSearch source code with all depend
 
 To build:
 ```
-docker build -t completesearch --build-arg USERNAME=username --build-arg PASSWORD="password" .
+docker build -t completesearch --build-arg SVN_USERNAME="username" --build-arg SVN_PASSWORD="password" .
 ```
-Where *USERNAME* and *PASSWORD* are your credentials for CompleteSearch svn repository.
+Where *SVN_USERNAME* and *SVN_PASSWORD* are your credentials for CompleteSearch svn repository.
 
-**Note:** You need to escape the password with quotes "".
+**Note:** You need to escape username and password with quotes "".
 
 ---
 
