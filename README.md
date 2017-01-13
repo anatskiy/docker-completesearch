@@ -1,8 +1,9 @@
-CompleteSearch Docker Image: download CompleteSearch source code with all dependencies and compile (build) it.
+CompleteSearch Docker image: download CompleteSearch source code with all dependencies and build it.
 
 ## Installed tools
 
 * [CompleteSearch](http://ad-wiki.informatik.uni-freiburg.de/completesearch)
+* [CompleteSearch web app](https://github.com/anatskiy/CompleteSearch)
 
 ## Requirements
 
