@@ -37,7 +37,7 @@ RUN apt-get install -y nano curl git python3-pip npm && \
     apt-get install -y nodejs
 
 # Download CompleteSearch web app
-RUN git clone https://github.com/anatskiy/CompleteSearch.git . && mkdir logs
+RUN git clone https://github.com/anatskiy/CompleteSearch.git . && mkdir logs data
 
 # Install backend dependencies
 RUN pip3 install -r requirements.txt
@@ -55,6 +55,6 @@ RUN mkdir /usr/src/data
 
 VOLUME ["/usr/src/app", "/usr/src/completesearch", "/usr/src/data"]
 
-EXPOSE 5000
+EXPOSE 5000 8888
 
 CMD ["python3", "manage.py", "runserver", "-h", "0.0.0.0", "-p", "5000"]
