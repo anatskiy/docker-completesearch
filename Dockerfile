@@ -1,4 +1,4 @@
-FROM ubuntu:14.04
+FROM ubuntu:16.04
 
 MAINTAINER Evgeny Anatskiy <evgeny.anatskiy@gmail.com>
 
@@ -32,12 +32,12 @@ RUN make build-all
 WORKDIR /usr/src/app
 
 # Install CompleteSearch web app dependencies
-RUN apt-get install -y nano curl git python3-pip npm && \
-    curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash - && \
-    apt-get install -y nodejs
+RUN apt-get install -y sudo nano curl git python3-pip npm && \
+   curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash - && \
+   apt-get install -y nodejs
 
 # Download CompleteSearch web app
-RUN git clone https://github.com/anatskiy/CompleteSearch.git . && mkdir logs data
+RUN git clone https://github.com/anatskiy/CompleteSearch.git . && mkdir logs
 
 # Install backend dependencies
 RUN pip3 install -r requirements.txt
@@ -53,7 +53,7 @@ RUN cd client && gulp build
 # Create shared folder
 RUN mkdir /usr/src/data
 
-VOLUME ["/usr/src/app", "/usr/src/completesearch", "/usr/src/data"]
+# VOLUME ["/usr/src/app", "/usr/src/completesearch", "/usr/src/data"]
 
 EXPOSE 5000 8888
 
