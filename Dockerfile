@@ -57,4 +57,4 @@ RUN mkdir /usr/src/data
 
 EXPOSE 5000 8888
 
-CMD ["python3", "manage.py", "runserver", "-h", "0.0.0.0", "-p", "5000"]
+CMD ["python3", "manage.py", "runserver"]
