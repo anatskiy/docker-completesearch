@@ -2,9 +2,9 @@ FROM ubuntu:16.04
 
 MAINTAINER Evgeny Anatskiy <evgeny.anatskiy@gmail.com>
 
-# Install CompleteSearch dependencies
+# Install system dependencies
 RUN apt-get update && apt-get -y upgrade && \
-    apt-get install -y language-pack-en make subversion && \
+    apt-get install -y language-pack-en make nano curl wget unzip subversion git python3-pip libffi-dev libssl-dev && \
     apt-get install -y g++ zlib1g-dev libexpat1-dev libboost-all-dev libsparsehash-dev libgtest-dev libstxxl-dev
 
 # Build arguments
@@ -12,7 +12,7 @@ ARG SVN_USERNAME
 ARG SVN_PASSWORD
 
 ENV LANG en_US.UTF-8
-ENV TERM=xterm
+ENV TERM xterm
 
 WORKDIR /usr/src/completesearch
 
@@ -29,31 +29,20 @@ ADD fixes/* server/
 # Build CompleteSearch
 RUN make build-all
 
+# Download web app
+RUN cd /usr/src && \
+	wget `curl -s https://api.github.com/repos/anatskiy/CompleteSearch/releases/latest | grep browser_download_url | cut -d '"' -f 4` && \
+	ls && \
+	unzip app.zip && \
+	rm app.zip
+
 WORKDIR /usr/src/app
-
-# Install CompleteSearch web app dependencies
-RUN apt-get install -y sudo nano curl git python3-pip npm && \
-   curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash - && \
-   apt-get install -y nodejs
-
-# Download CompleteSearch web app
-RUN git clone https://github.com/anatskiy/CompleteSearch.git . && mkdir logs
 
 # Install backend dependencies
 RUN pip3 install -r requirements.txt
 
-# Install frontend dependencies
-RUN cd client && \
-    npm install -g gulp && \
-    npm install
-
-# Build client
-RUN cd client && gulp build
-
 # Create shared folder
 RUN mkdir /usr/src/data
-
-# VOLUME ["/usr/src/app", "/usr/src/completesearch", "/usr/src/data"]
 
 EXPOSE 5000 8888
 
