@@ -27,7 +27,7 @@ Build the image:
 ```
 docker build -t completesearch --build-arg SVN_USERNAME="username" --build-arg SVN_PASSWORD="password” .
 ```
-Where *SVN_USERNAME* and *SVN_PASSWORD* are your credentials for CompleteSearch svn repository. [More information](http://ad-wiki.informatik.uni-freiburg.de/completesearch).
+Where `SVN_USERNAME` and `SVN_PASSWORD` are your credentials for CompleteSearch svn repository. [More information](http://ad-wiki.informatik.uni-freiburg.de/completesearch).
 
 **Note:** You need to escape username and password with double quotes "".
 
