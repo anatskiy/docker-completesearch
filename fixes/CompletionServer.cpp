@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <fstream>
 #include <cfloat>
+#include <limits>
 #include "CompletionServer.h"
 #include "HYBCompleter.h"
 #include "INVCompleter.h"
@@ -65,6 +66,11 @@ Timer CompletionServer<Completer, Index>::threadCreateTimer;
 
 //! MUTEX FOR EXCERPT GENERATION (not yet thread-safe, TODO: why?)
 pthread_mutex_t excerpts_generation;
+
+//! Enables or disables cross-origin resource sharing.  If enabled, the HTTP
+//! header "Access-Control-Allow-Origin: *" is sent with each response to
+//! allow access from other domains and ports.
+bool corsEnabled = false;
 
 //! GET SIGNAL NAME (copied from man page for signal, cf. man 7 signal)
 string signalName(int signal)
@@ -214,6 +220,8 @@ CompletionServer<Completer, Index>::CompletionServer(
   acceptor(io_service),
   index(passedIndexStructureFile, passedVocabularyFile, mode)
 {
+  index.read();
+
   // Determine encoding, date, name, etc. 
   //
   //   Note: we create a completer object just for this purpose (like we will
@@ -309,6 +317,39 @@ CompletionServer<Completer, Index>::CompletionServer(
   for (size_t i = 0; i < tmp3.size(); ++i)
     if (tmp3[i] == '_') tmp3[i] = ' ';
   cout << "* name of collection is \"" << tmp3 << "\"" << endl;
+
+  // NEW(bast, 21-03-2017): if option --keep-in-history-queries specified, read
+  // queries from file and add with History::addKeepInHistoryQuery.
+  if (keepInHistoryQueriesFileName != "") {
+    Vocabulary keepInHistoryQueries;
+    readWordsFromFile(keepInHistoryQueriesFileName, keepInHistoryQueries,
+                       "queries to always keep in history");
+    for (size_t i = 0; i < keepInHistoryQueries.size(); i++) {
+      string query = keepInHistoryQueries[i];
+      history.addKeepInHistoryQuery(query);
+    }
+  }
+
+  // NEW(bast, 19-03-2017): if option --warm-history-queries specified, read
+  // queries from file and execute them.
+  if (warmHistoryQueriesFileName != "") {
+    Vocabulary warmHistoryQueries;
+    readWordsFromFile(warmHistoryQueriesFileName, warmHistoryQueries,
+                       "queries for history warming");
+    Timer timer;
+    off_t queryTimeoutCopy = queryTimeout;
+    queryTimeout = std::numeric_limits<off_t>::max();
+    for (size_t i = 0; i < warmHistoryQueries.size(); i++) {
+      string query = warmHistoryQueries[i];
+      cout << "* warming history with query \"" << query << "\" ... " << flush;
+      timer.start();
+      string tmp = completer.getTopContinuationOfQuery(query);
+      timer.stop();
+      cout << "done in " << timer << endl;
+      // cout << "done, top result = \"" << tmp << "\"" << endl;
+    }
+    queryTimeout = queryTimeoutCopy;
+  }
 
   /*
    * NEW 15Nov12 (baumgari): Vector which holds all attributes, which should
@@ -885,8 +926,10 @@ void CompletionServer<Completer, Index>::processRequest(boost::asio::ip::tcp::so
            << "Content-Length: " << resultString.size() << "\r\n"
            << "Connection: close\r\n" 
            << "Content-Type: " << contentType
-           << "; charset=" << encodingAsString << "\r\n\r\n"
-           << resultString;
+           << "; charset=" << encodingAsString << "\r\n";
+        if (corsEnabled)
+          os << "Access-Control-Allow-Origin: *\r\n";
+        os << "\r\n" << resultString;
         resultString = os.str();
 
         log << "* NEW: Returning specified file: \"" << path << "\"" << endl;
@@ -1544,6 +1587,8 @@ string CompletionServer<Completer, Index>::resultAsHttpResponse(
      << "Content-Length: " << content.size() << "\r\n"
      << "Connection: close\r\n"
      << "Content-Type: text/xml; charset=" << encodingAsString << "\r\n";
+  if (corsEnabled)
+    os << "Access-Control-Allow-Origin: *\r\n";
   os << "\r\n" << content;
   return os.str();
 }
@@ -1650,8 +1695,8 @@ string CompletionServer<Completer, Index>::resultAsJsonObject(
     if (hits[i].excerpts.size() > 1) os3 << openbrace;
     for (unsigned int j = 0; j < hits[i].excerpts.size(); ++j)
     {
-      os3 << "\"" << hits[i].excerpts[j] << "\"" <<
-        (j < (hits[i].excerpts.size() - 1) ? "," : "") << "\r\n";
+      os3 << "\"" << hits[i].excerpts[j] << "\""
+          << (j < (hits[i].excerpts.size() - 1) ? "," : "") << "\r\n";
     }
     os3 << (i < hits.size() - 1 ? closebracecomma : closebrace);
   }
@@ -1694,6 +1739,9 @@ string CompletionServer<Completer, Index>::resultAsJsonObject(
   else
     os << "Content-Type: application/json; charset=" << encodingAsString << "\r\n";
   
+  if (corsEnabled)
+    os << "Access-Control-Allow-Origin: *\r\n";
+
   os << "\r\n" << content;
   return os.str();
 }

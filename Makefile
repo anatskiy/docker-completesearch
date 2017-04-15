@@ -7,7 +7,7 @@ BASE_NAME = ../data/input
 
 WORD_SEPARATOR_BACKEND = :
 
-prepare_input:
+process_input:
 	$(MAKE) pall PARSER_OPTIONS="--base-name=$(BASE_NAME) --write-docs-file --write-words-file-ascii --normalize-words --encoding=utf8 --maps-directory=parser/ ${OPTIONS}"
 	cp ../data/{input.hybrid,input.vocabulary,input.docs.DB} server/
 	$(MAKE) start_server
