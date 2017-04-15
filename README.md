@@ -35,7 +35,7 @@ Where `SVN_USERNAME` and `SVN_PASSWORD` are your credentials for CompleteSearch 
 
 Run the container:
 ```
-docker run -d -p 5000:5000 --name completesearch completesearch
+docker run -d --name completesearch -p 5000:5000 -p 8888:8888 completesearch python3 manage.py runserver
 ```
 
 ---
