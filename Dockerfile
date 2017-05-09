@@ -32,7 +32,6 @@ RUN make build-all
 # Download web app
 RUN cd /usr/src && \
 	wget `curl -s https://api.github.com/repos/anatskiy/CompleteSearch/releases/latest | grep browser_download_url | cut -d '"' -f 4` && \
-	ls && \
 	unzip app.zip && \
 	rm app.zip
 
