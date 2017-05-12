@@ -30,7 +30,7 @@ string baseName;
 bool showQueryResult = false;
 
 //! Name of the PID (process id) file. Leading ~ s will be replaced by home
-//! directory, first %s will be replaced by hostname, second %d will be replaced 
+//! directory, first %s will be replaced by hostname, second %d will be replaced
 //! by port. The ~ and the two %s are optional.
 string pidFileNameFormatString = "~/.completesearch_%s_%s.pid";
 
@@ -179,7 +179,7 @@ string getHTTPStatusMessage(int statusCode) {
   }
 }
 
-//! KILL SERVER 
+//! KILL SERVER
 void killServer(string pidFileName)
 {
   // WARNING: log file not opened here, when called from main => cannot use LOCK/UNLOCK
@@ -210,7 +210,7 @@ void killServer(string pidFileName)
 } // end of function killServer
 
 
-//! CONSTRUCTOR 
+//! CONSTRUCTOR
 template<class Completer, class Index>
 CompletionServer<Completer, Index>::CompletionServer(
     const string& passedIndexStructureFile,
@@ -222,7 +222,7 @@ CompletionServer<Completer, Index>::CompletionServer(
 {
   index.read();
 
-  // Determine encoding, date, name, etc. 
+  // Determine encoding, date, name, etc.
   //
   //   Note: we create a completer object just for this purpose (like we will
   //   create a completer object for every query in the main server loop). Each
@@ -231,7 +231,7 @@ CompletionServer<Completer, Index>::CompletionServer(
   //
   if (!fuzzySearchEnabled) _fuzzySearcher = &nullFuzzySearcher;
   Completer completer(&index, &history, &nullFuzzySearcher);
-  string infoQuery = string("!!encoding") + wordPartSep + string("*");
+  string infoQuery = string(":info:encoding") + wordPartSep + string("*");
   completer.resetTimersAndCounters();
   string tmp1 = completer.getTopContinuationOfQuery(infoQuery);
   // NOTE(bast): the encoding set here determines the encoding in the first line
@@ -305,13 +305,13 @@ CompletionServer<Completer, Index>::CompletionServer(
     }
   }
   // Show date of index building and name of index (for convenience only).
-  infoQuery = string("!!date") + wordPartSep + string("*");
+  infoQuery = string(":info:date") + wordPartSep + string("*");
   completer.resetTimersAndCounters();
   string tmp2 = completer.getTopContinuationOfQuery(infoQuery);
   for (size_t i = 0; i < tmp2.size(); ++i)
     if (tmp2[i] == '_') tmp2[i] = ' ';
   cout << "* date of index construction is " << tmp2 << endl;
-  infoQuery = string("!!name") + wordPartSep + string("*");
+  infoQuery = string(":info:name") + wordPartSep + string("*");
   completer.resetTimersAndCounters();
   string tmp3 = completer.getTopContinuationOfQuery(infoQuery);
   for (size_t i = 0; i < tmp3.size(); ++i)
@@ -358,7 +358,7 @@ CompletionServer<Completer, Index>::CompletionServer(
    * this list to the index "!hitinfo-multiple trees authors flowers" and
    * initializing it by searching for it.
    */
-  infoQuery = string("!!hitinfo-multiple") + wordPartSep + string("*");
+  infoQuery = string(":info:hitinfo-multiple") + wordPartSep + string("*");
   completer.resetTimersAndCounters();
   multipleAttributes
     = completer.getAllContinuationsOfQuery(infoQuery);
@@ -372,7 +372,7 @@ CompletionServer<Completer, Index>::CompletionServer(
 
   /* NEW 20Feb14 (baumgari): String which specifies the formats of the info
    * fields. */
-  infoQuery = string("!!info-fields-formats") + wordPartSep + string("*");
+  infoQuery = string(":info:field-formats") + wordPartSep + string("*");
   completer.resetTimersAndCounters();
   infoFieldsFormats = completer.getTopContinuationOfQuery(infoQuery);
   if (infoFieldsFormats.empty())
@@ -383,7 +383,7 @@ CompletionServer<Completer, Index>::CompletionServer(
 
   /* NEW 05Mar14 (baumgari): String which specifies the info delimiter, if
    * defined in the index. */
-  infoQuery = string("!!info-field-delimiter") + wordPartSep + string("*");
+  infoQuery = string(":info:field-delimiter") + wordPartSep + string("*");
   completer.resetTimersAndCounters();
   infoQuery = completer.getTopContinuationOfQuery(infoQuery);
   if (infoQuery.empty())
@@ -391,7 +391,7 @@ CompletionServer<Completer, Index>::CompletionServer(
   else
   {
     infoDelim = infoQuery[0];
-    cout << "* The specified info field delimiter is " 
+    cout << "* The specified info field delimiter is "
          << infoDelim << endl;
   }
 
@@ -425,7 +425,7 @@ CompletionServer<Completer, Index>::CompletionServer(
   size_t n = 250000;
   Vector<unsigned int> A[4];
   for (size_t i = 0; i < 4; ++i) A[i].resize(n);
-  
+
   Timer initialSortTimer;
   parallelSortTimePerMillionIntegers = 0;
   unsigned int numOfRuns = 10;
@@ -472,7 +472,7 @@ void CompletionServer<Completer, Index>::createSocket(int port,
   acceptor.open(endpoint.protocol());
   acceptor.set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
   acceptor.set_option(boost::asio::ip::tcp::acceptor::keep_alive(true));
- 
+
   boost::system::error_code createSocketError;
 
   const unsigned int NOF_TRIALS_CREATE_SOCKET = 19;
@@ -486,9 +486,9 @@ void CompletionServer<Completer, Index>::createSocket(int port,
   {
     acceptor.bind(endpoint, createSocketError);
     if (createSocketError == boost::system::errc::success) break;
-    cout << "! bind socket to port \"" << port << "\" failed (" << 
+    cout << "! bind socket to port \"" << port << "\" failed (" <<
         createSocketError.message() << ")" << flush;
-    if (i >= NOF_TRIALS_CREATE_SOCKET - 1) 
+    if (i >= NOF_TRIALS_CREATE_SOCKET - 1)
     {
       ostringstream os;
       os << "tried " << NOF_TRIALS_CREATE_SOCKET << " times";
@@ -500,7 +500,7 @@ void CompletionServer<Completer, Index>::createSocket(int port,
         << (i + 1) << "/" << NOF_TRIALS_CREATE_SOCKET << ")" << endl;
     usleep(usecs);
   }
-  
+
   acceptor.listen(boost::asio::socket_base::max_connections, createSocketError);
   if (createSocketError != boost::system::errc::success) {
     ostringstream os;
@@ -716,7 +716,7 @@ void CompletionServer<Completer, Index>::processRequest(boost::asio::ip::tcp::so
     // Will block until async callbacks are finished
     io_service.run();
     io_service.reset();
-  
+
     // Interpret received data.
     requestString = buf;
     delete[] buf;
@@ -736,7 +736,7 @@ void CompletionServer<Completer, Index>::processRequest(boost::asio::ip::tcp::so
         completionServerProtocol = CS_PROTOCOL_HTTP_POST;
       else if (requestString.compare(0, 4, "HEAD") == 0)
        completionServerProtocol = CS_PROTOCOL_HTTP_HEAD;
-    } 
+    }
     if (endOfHeader == string::npos) endOfHeader = requestString.find("\r\n\r\n");
 
     // POST request procedure.
@@ -794,7 +794,7 @@ void CompletionServer<Completer, Index>::processRequest(boost::asio::ip::tcp::so
         CS_THROW(Exception::BAD_REQUEST, os.str());
       }
     }
-  
+
     completer.receiveQueryTimer.stop();
 
     // Read buffer -> request string
@@ -806,19 +806,19 @@ void CompletionServer<Completer, Index>::processRequest(boost::asio::ip::tcp::so
       completer.statusCode = 400;
       CS_THROW(Exception::BAD_REQUEST, os.str());
     }
-      
+
     unsigned int requestStringLength = requestString.length();
     size_t pos = requestString.find('\r');
     if (pos != string::npos) requestString.erase(pos) + "...";
     log << "received \"" << requestString
-        << (postRequestContent.empty() ? ""  : 
+        << (postRequestContent.empty() ? ""  :
 	   ("\" with query parameters: \"" + postRequestContent))
-        << "\" (" << requestStringLength << " characters) in " 
-        << completer.receiveQueryTimer 
+        << "\" (" << requestStringLength << " characters) in "
+        << completer.receiveQueryTimer
 	<< endl;
 
     //
-    // 2. Parse request string (extract parameters and actual prefix completion query) 
+    // 2. Parse request string (extract parameters and actual prefix completion query)
     //
 
     log << IF_VERBOSITY_HIGH << "! completion server protocol: HTTP" << endl;
@@ -834,7 +834,7 @@ void CompletionServer<Completer, Index>::processRequest(boost::asio::ip::tcp::so
     requestString.erase(pos);
 
     // Erase request method string ("GET ", "POST ", "HEAD ").
-    switch (completionServerProtocol) 
+    switch (completionServerProtocol)
     {
       case CS_PROTOCOL_HTTP_GET:
         requestString.erase(0, 4);
@@ -876,7 +876,7 @@ void CompletionServer<Completer, Index>::processRequest(boost::asio::ip::tcp::so
     {
       // NEW 13Mar09 (Hannah): url decode the request string (+ -> space, %20 -> space, etc.)
       requestString = decodeHexNumbers(requestString);
- 
+
       ostringstream os;
       if (!documentRoot.empty())
       {
@@ -918,13 +918,13 @@ void CompletionServer<Completer, Index>::processRequest(boost::asio::ip::tcp::so
         string extension = requestString.substr(requestString.rfind('.') + 1);
         if      (extension == "css")   contentType = "text/css";
         else if (extension == "js")    contentType = "text/javascript";
-        else if (extension == "html"   
+        else if (extension == "html"
               || extension == "htm"
               || extension == "shtml") contentType = "text/html";
 
         os << "HTTP/1.1 200 OK\r\n"
            << "Content-Length: " << resultString.size() << "\r\n"
-           << "Connection: close\r\n" 
+           << "Connection: close\r\n"
            << "Content-Type: " << contentType
            << "; charset=" << encodingAsString << "\r\n";
         if (corsEnabled)
@@ -957,12 +957,12 @@ void CompletionServer<Completer, Index>::processRequest(boost::asio::ip::tcp::so
     requestString = queryParameters.query;
     // NEW 13Mar09 (Hannah): url decode the request string (+ -> space, %20 -> space, etc.)
     requestString = decodeHexNumbers(requestString);
- 
+
     if (queryParameters.queryType == QueryParameters::NORMAL)
     {
       //queryParameters.extractFromRequestStringHttp(requestString);
       // NEW 26Aug11 (Hannah+Ina): Make sure that number of hits and number of
-      // completions are 
+      // completions are
       // TODO(bast): add command-line options for these thresholds.
       // TODO(bast): better have a threshold on the size of the result object
       // (for example, also a result with relatively few hits could be very
@@ -981,7 +981,7 @@ void CompletionServer<Completer, Index>::processRequest(boost::asio::ip::tcp::so
         const char* description;
       }
       maxNofs[4] =
-      { 
+      {
         { queryParameters.nofTopHitsToCompute,
           maxNofTopHitsToCompute, "nofTopHitsToCompute" },
         { queryParameters.nofHitsToSend,
@@ -1014,8 +1014,8 @@ void CompletionServer<Completer, Index>::processRequest(boost::asio::ip::tcp::so
     if (cleanupQueryBeforeProcessing == true)
     {
       // Cleaning request string to avoid heavy server load by receiving
-      // requests like: 
-      // bi*^~ *^~ *^~ gehäuse*^~ 
+      // requests like:
+      // bi*^~ *^~ *^~ gehäuse*^~
       // 10..25.40cm.*^~ Digitus*^~
       // NEW (baumgari, 04Apr13): extracted a method. Method name is not
       // chosen properly, since it's like the attribute holding the option.
@@ -1036,9 +1036,9 @@ void CompletionServer<Completer, Index>::processRequest(boost::asio::ip::tcp::so
 
       //
       // 3. Process prefix search and completion query
-      // 
+      //
       //   NOTE: the query result is a *pointer* which will either point to an already
-      //   existing object in the history, or to a newly allocated object 
+      //   existing object in the history, or to a newly allocated object
       //
       //   TODO(bast): central processQuery method computes completions as
       //   strings and hits ads doc ids; would be more natural to compute word
@@ -1083,7 +1083,7 @@ void CompletionServer<Completer, Index>::processRequest(boost::asio::ip::tcp::so
     errorOccurred = true;
     errorMessage = string("UNKNOWN EXCEPTION");
   }
- 
+
   if (errorOccurred == true)
   {
     log << "! " << errorMessage << endl;
@@ -1206,7 +1206,7 @@ void CompletionServer<Completer, Index>::processRequest(boost::asio::ip::tcp::so
         << " was already removed. Cannot set its status. " << endl;
     else
     {
-    } 
+    }
   }
 
   // Clean up the history; TODO: what is that?
@@ -1262,7 +1262,7 @@ void CompletionServer<Completer, Index>::processRequest(boost::asio::ip::tcp::so
   //
 
   completer.threadTimer.stop();
-        
+
   if (queryParameters.queryType == QueryParameters::NORMAL)
   {
     if (true)
@@ -1443,7 +1443,7 @@ string CompletionServer<Completer, Index>::buildResponseString(
             hits, log);
     // If the responseFormat is not xml, it has to be json or jsonp.
     else
-    {   
+    {
       bool convertXmlToJson = true;
       resultString = resultAsJsonObject(query, queryParameters, result,
                                     completer, hits, log, convertXmlToJson);
@@ -1493,7 +1493,7 @@ string CompletionServer<Completer, Index>::resultAsHttpResponse(
   os1 << "<?xml version=\"1.0\" encoding=\"" << encodingAsString << "\"?>\r\n"
       << "<result>\r\n" << "<query id=\"" << log._id << "\">" << queryStrRewritten
       << "</query>\r\n";
-  os1 << "<status code=\"" << completer.statusCode << "\">" 
+  os1 << "<status code=\"" << completer.statusCode << "\">"
       << getHTTPStatusMessage(completer.statusCode) << "</status>\r\n";
   unsigned int nc = queryParameters.nofCompletionsToSend;
   if (nc > result._topWordIds.size()) nc = result._topWordIds.size();
@@ -1593,7 +1593,7 @@ string CompletionServer<Completer, Index>::resultAsHttpResponse(
   return os.str();
 }
 
-//! Format a query result + excerpts as a json obect 
+//! Format a query result + excerpts as a json obect
 template<class Completer, class Index>
 string CompletionServer<Completer, Index>::resultAsJsonObject(
     const Query& query, const QueryParameters& queryParameters,
@@ -1623,7 +1623,7 @@ string CompletionServer<Completer, Index>::resultAsJsonObject(
   // splitted at the point elsewhise -> Philip_S"."_Yu is correct now.
   // This can lead to problems within the xml and json output, so the quotes
   // should be escaped here.
-  queryStrRewritten = x2j.escapeInvalidChars(queryStrRewritten); 
+  queryStrRewritten = x2j.escapeInvalidChars(queryStrRewritten);
 
   /*os1 << "<?xml version=\"1.0\" encoding=\"" << encodingAsString << "\"?>\r\n"i*/
   if (queryParameters.format == QueryParameters::JSONP)
@@ -1663,7 +1663,7 @@ string CompletionServer<Completer, Index>::resultAsJsonObject(
       // them.
       wordId = (*completer._vocabulary).mappedWordId(wordId);
       wordRewritten = replaceWordPartSeparatorBackendToFrontend((*completer._vocabulary)[wordId]);
-      wordRewritten = x2j.escapeInvalidChars(wordRewritten); 
+      wordRewritten = x2j.escapeInvalidChars(wordRewritten);
     }
     else
       wordRewritten = "[invalid word id]";
@@ -1738,7 +1738,7 @@ string CompletionServer<Completer, Index>::resultAsJsonObject(
     os << "Content-Type: application/javascript; charset=" << encodingAsString << "\r\n";
   else
     os << "Content-Type: application/json; charset=" << encodingAsString << "\r\n";
-  
+
   if (corsEnabled)
     os << "Access-Control-Allow-Origin: *\r\n";
 
@@ -1756,7 +1756,7 @@ void CompletionServer<Completer, Index>::read_callback(const char* buffer, int& 
 {
   if (error || !bytesTransferred)
   {
-    if (error) 
+    if (error)
     {
       ostringstream os;
       os << "An error occured while retrieving the request: \""
@@ -1767,7 +1767,7 @@ void CompletionServer<Completer, Index>::read_callback(const char* buffer, int& 
     // No data was read!
     return;
   }
-  
+
   // Read request type.
   if (completionServerProtocol == CS_PROTOCOL_UNDEFINED)
   {

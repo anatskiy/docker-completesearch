@@ -25,7 +25,7 @@ cd docker-completesearch
 
 Build the image:
 ```
-docker build -t completesearch --build-arg SVN_USERNAME="username" --build-arg SVN_PASSWORD="password” .
+docker build -t completesearch --build-arg SVN_USERNAME="username" --build-arg SVN_PASSWORD="password" .
 ```
 Where `SVN_USERNAME` and `SVN_PASSWORD` are your credentials for CompleteSearch svn repository. [More information](http://ad-wiki.informatik.uni-freiburg.de/completesearch).
 
@@ -35,7 +35,7 @@ Where `SVN_USERNAME` and `SVN_PASSWORD` are your credentials for CompleteSearch 
 
 Run the container:
 ```
-docker run -d --name completesearch -p 5000:5000 -p 8888:8888 completesearch python3 manage.py runserver
+docker run -d --name cs --restart unless-stopped -p 5000:5000 -p 8888:8888 completesearch
 ```
 
 ---
