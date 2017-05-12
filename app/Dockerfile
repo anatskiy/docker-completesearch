@@ -22,7 +22,7 @@ WORKDIR /usr/src/completesearch
 
 # Download CompleteSearch codebase
 RUN svn checkout https://ad-svn.informatik.uni-freiburg.de/completesearch/codebase --username $SVN_USERNAME --password $SVN_PASSWORD --non-interactive --trust-server-cert . && \
-    cp parser/{utf8,iso8859-1}.map server/
+    cp parser/utf8.map ./ && cp parser/iso8859-1.map ./
 
 # Fix some bugs in the source code (temporary solution)
 ADD fixes/* server/
