@@ -26,26 +26,21 @@ cd docker-completesearch
 Build the image:
 ```
 docker build -t completesearch --build-arg SVN_USERNAME="username" --build-arg SVN_PASSWORD="password" .
+SVN_USERNAME="username" SVN_USERNAME="password" docker-compose build
 ```
-Where `SVN_USERNAME` and `SVN_PASSWORD` are your credentials for CompleteSearch svn repository. [More information](http://ad-wiki.informatik.uni-freiburg.de/completesearch).
+Where `SVN_USERNAME` and `SVN_PASSWORD` are your credentials for the CompleteSearch svn repository. [More information](http://ad-wiki.informatik.uni-freiburg.de/completesearch).
 
 **Note:** You need to escape username and password with double quotes "".
 
 ### Step 2
 
-Run the container:
+Start the services:
 ```
-docker run -d --name cs --restart unless-stopped -p 5000:5000 -p 8888:8888 completesearch
+docker-compose up -d
 ```
 
 ---
 
 ## Usage
 
-Open CompleteSearch `http://localhost:5000/`
-
-To enter the running container:
-```
-docker exec -it completesearch /bin/bash
-docker restart completesearch
-```
+Open CompleteSearch `http://localhost:8000/`

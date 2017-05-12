@@ -48,7 +48,3 @@ RUN npm install -g gulp && npm install
 RUN gulp webpack:once
 
 RUN mkdir /usr/src/data
-
-EXPOSE 5000 8888
-
-CMD ["python3", "manage.py", "runserver"]
