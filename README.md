@@ -8,12 +8,13 @@ CompleteSearch Docker image: download CompleteSearch source code with all depend
 ## Requirements
 
 * [Docker](https://docs.docker.com/engine/installation/) for Linux/macOS/Windows
+* [Docker Compose](https://docs.docker.com/compose/install/)
 
 ## Installation
 
 ### Step 0
 
-Install [Docker](https://docs.docker.com/engine/installation/).
+Install Docker and Docker Compose.
 
 ### Step 1
 
