@@ -23,9 +23,8 @@ git clone https://github.com/anatskiy/docker-completesearch.git
 cd docker-completesearch
 ```
 
-Build the image:
+Build the images:
 ```
-docker build -t completesearch --build-arg SVN_USERNAME="username" --build-arg SVN_PASSWORD="password" .
 SVN_USERNAME="username" SVN_USERNAME="password" docker-compose build
 ```
 Where `SVN_USERNAME` and `SVN_PASSWORD` are your credentials for the CompleteSearch svn repository. [More information](http://ad-wiki.informatik.uni-freiburg.de/completesearch).
@@ -43,4 +42,4 @@ docker-compose up -d
 
 ## Usage
 
-Open CompleteSearch `http://localhost:8000/`
+Open CompleteSearch at `http://localhost:8000/`
