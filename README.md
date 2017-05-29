@@ -3,13 +3,12 @@
 ## Requirements
 
 * [Docker](https://docs.docker.com/engine/installation/) for Linux/macOS/Windows
-* [Docker Compose](https://docs.docker.com/compose/install/)
 
 ## Installation
 
 ### Step 0
 
-Install Docker and Docker Compose.
+Install Docker.
 
 ### Step 1
 
@@ -19,9 +18,13 @@ git clone https://github.com/anatskiy/docker-completesearch.git
 cd docker-completesearch
 ```
 
-Build the images:
+Build the image:
 ```
-SVN_USERNAME="username" SVN_USERNAME="password" docker-compose build
+docker build \
+    -t completesearch \
+    --build-arg SVN_USERNAME="username" \
+    --build-arg SVN_PASSWORD="password" \
+    .
 ```
 Where `SVN_USERNAME` and `SVN_PASSWORD` are your credentials for the CompleteSearch svn repository. [More information](http://ad-wiki.informatik.uni-freiburg.de/completesearch).
 
@@ -29,9 +32,14 @@ Where `SVN_USERNAME` and `SVN_PASSWORD` are your credentials for the CompleteSea
 
 ### Step 2
 
-Start the services:
+Run the container:
 ```
-docker-compose up -d
+docker run -d \
+    --name completesearch \
+    -p 8000:8000 \
+    -p 8888:8888 \
+    completesearch \
+    python3 manage.py runserver -h 0.0.0.0 -p 8000
 ```
 
 ---
