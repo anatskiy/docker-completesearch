@@ -11,20 +11,15 @@ RUN apt-get update && apt-get -y upgrade && \
 RUN curl -sL https://deb.nodesource.com/setup_7.x | bash - && \
     apt-get install -y nodejs
 
-# Build arguments
-ARG SVN_USERNAME
-ARG SVN_PASSWORD
 
 ENV LANG en_US.UTF-8
 ENV TERM xterm
 
+COPY completesearch /usr/src/completesearch/
 WORKDIR /usr/src/completesearch
 
-# Download CompleteSearch codebase
-RUN svn checkout https://ad-svn.informatik.uni-freiburg.de/completesearch/codebase --username $SVN_USERNAME --password $SVN_PASSWORD --non-interactive --trust-server-cert --revision 1715 .
-
 # Fix some bugs in the source code (temporary solution)
-ADD fixes/* server/
+COPY fixes/* server/
 
 # Build the codebase
 RUN make build-all
@@ -32,7 +27,7 @@ RUN make build-all
 WORKDIR /usr/src/app
 
 # Download web app
-RUN git clone https://github.com/anatskiy/CompleteSearch.git .
+RUN git clone https://github.com/niklas88/CompleteSearch.git .
 
 # Install backend dependencies
 RUN pip3 install -r requirements.txt
